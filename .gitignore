@@ -12,3 +12,6 @@
 
 # Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
 .glide/
+
+# API credentials for running tests against an instance of an IPS forum
+credentials.json
