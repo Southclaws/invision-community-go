@@ -5,14 +5,16 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Client represents a RESTful client for IPS 4 API
 type Client struct {
 	http *resty.Client
 }
 
+// NewClient creates a client for connecting to the server and pings the /core/hello endpoint in
+// order to check if the key is valid and the endpoint is online
 func NewClient(endpoint, key string) (*Client, error) {
 	cl := &Client{
 		http: resty.New().
-			SetDebug(true).
 			SetHostURL(endpoint).
 			SetQueryParam("key", key).
 			SetRESTMode(),
