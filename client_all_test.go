@@ -9,11 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	endpoint string
-	key      string
-	client   *Client
-)
+var client *Client
 
 func TestMain(m *testing.M) {
 	var raw map[string]interface{}
@@ -28,15 +24,12 @@ func TestMain(m *testing.M) {
 		panic(err)
 	}
 
-	endpoint = raw["endpoint"].(string)
-	key = raw["key"].(string)
+	endpoint := raw["endpoint"].(string)
+	key := raw["key"].(string)
 
-	os.Exit(m.Run())
-}
-
-func TestConnectClient(t *testing.T) {
-	var err error
 	client, err = NewClient(endpoint, key)
 	assert.NoError(t, err)
 	assert.NotNil(t, client)
+
+	os.Exit(m.Run())
 }
