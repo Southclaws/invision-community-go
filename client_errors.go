@@ -1,10 +1,14 @@
 package ips
 
+// APIError represents the return payload of a failed API request
 type APIError struct {
 	Code string `json:"errorCode"`
 	Name string `json:"errorMessage"`
 }
 
+// Errors stores a list of possible API errors. IPS errors often use the same codes for different
+// error types (for some unknown reason) so here, the code and name are used as a key in order to
+// uniquely identify each error.
 var Errors = map[string]string{
 	"1S290/A:IP_ADDRESS_BANNED":              "The IP address that is sending the request has been banned from the community.",
 	"1S290/A:TOO_MANY_REQUESTS_WITH_BAD_KEY": "The IP address that is sending the request has sent multiple requests with an invalid API key and so is prevented from sending any more requests for several minutes.",
@@ -23,6 +27,7 @@ var Errors = map[string]string{
 	"3S291/2:BAD_METHOD":                     "The endpoint the request was sent to does not exist - the HTTP request method may be incorrect (for example, sending a GET rather than a POST).",
 }
 
+// Description returns a human-friendly description of an error
 func (e APIError) Description() string {
 	return Errors[e.Code+":"+e.Name]
 }

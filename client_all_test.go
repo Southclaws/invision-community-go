@@ -5,8 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 var client *Client
@@ -28,8 +26,9 @@ func TestMain(m *testing.M) {
 	key := raw["key"].(string)
 
 	client, err = NewClient(endpoint, key)
-	assert.NoError(t, err)
-	assert.NotNil(t, client)
+	if err != nil {
+		panic(err)
+	}
 
 	os.Exit(m.Run())
 }
