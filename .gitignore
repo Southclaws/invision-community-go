@@ -15,3 +15,6 @@
 
 # API credentials for running tests against an instance of an IPS forum
 credentials.json
+
+# Tests contain sensitive information unfortunately
+*_test.go
