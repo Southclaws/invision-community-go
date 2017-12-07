@@ -1,14 +1,11 @@
 package ips
 
 import (
-	"fmt"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
-// Member represents a forum user
-type Member struct {
+// MemberGet represents a forum user response from a GET request
+type MemberGet struct {
 	ID                    int                    `json:"id"`                    // ID number
 	Name                  string                 `json:"name"`                  // Username
 	Title                 string                 `json:"title"`                 // Member title
@@ -30,7 +27,7 @@ type Member struct {
 	LastPost              time.Time              `json:"lastPost"`              // Latest content submission date
 	ProfileViews          int                    `json:"profileViews"`          // Number of times member's profile has been viewed
 	Birthday              string                 `json:"birthday"`              // Member birthday in MM/DD/YYYY format (or MM/DD format if no year has been supplied)
-	OriginalCustomFields  map[string]FieldGroup  `json:"customFields"`          // Custom profile fields
+	OriginalCustomFields  map[string]FieldGroup  `json:"CustomFields"`          // Custom profile fields
 	CustomFields          map[string]FieldGroups // some plonker decided the above field should be the worst possible format for such a simple data structure
 }
 
@@ -53,7 +50,7 @@ type FieldGroups map[string]string
 
 // GetMember implements GET /core/members/{id} and returns a Member object
 // https://invisioncommunity.com/developers/rest-api?endpoint=core/members/GETitem
-func (client *Client) GetMember(id string) (member Member, err error) {
+func (client *Client) GetMember(id string) (member MemberGet, err error) {
 	_, err = client.http.R().SetResult(&member).Get("/api/core/members/" + id)
 	if err != nil {
 		return
@@ -72,36 +69,5 @@ func (client *Client) GetMember(id string) (member Member, err error) {
 
 	// much simpler! access via member.CustomFields["group name"]["field name"]
 
-	return
-}
-
-// UpdateMember implements POST /core/members/{id}
-// https://invisioncommunity.com/developers/rest-api?endpoint=core/members/POSTitem
-func (client *Client) UpdateMember(member Member) (err error) {
-	member.OriginalCustomFields = make(map[string]FieldGroup)
-
-	fieldGroupNumber := 0
-	fieldNumber := 0
-	for fieldGroupName, fieldGroupFields := range member.CustomFields {
-		member.OriginalCustomFields[fmt.Sprint(fieldGroupNumber+1)] = FieldGroup{
-			Name:   fieldGroupName,
-			Fields: make(map[string]Field),
-		}
-
-		for fieldName, fieldValue := range fieldGroupFields {
-			member.OriginalCustomFields[fmt.Sprint(fieldGroupNumber+1)].Fields[fmt.Sprint(fieldNumber+1)] = Field{
-				Name:  fieldName,
-				Value: fieldValue,
-			}
-			fieldNumber++
-		}
-
-		fieldGroupNumber++
-	}
-
-	resp, err := client.http.R().SetBody(member).Post("/api/core/members/" + fmt.Sprint(member.ID))
-	if resp.StatusCode() != 200 {
-		err = errors.Errorf("status not 200: ", resp.Status())
-	}
 	return
 }
